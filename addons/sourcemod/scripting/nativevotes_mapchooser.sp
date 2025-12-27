@@ -433,7 +433,7 @@ public void Event_TeamPlayWinPanel(Event event, const char[] name, bool dontBroa
 	if (g_ChangeMapAtRoundEnd)
 	{
 		g_ChangeMapAtRoundEnd = false;
-		CreateTimer(2.0, Timer_ChangeMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(15.0, Timer_ChangeMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 		g_ChangeMapInProgress = true;
 	}
 	
@@ -475,7 +475,7 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 	if (g_ChangeMapAtRoundEnd)
 	{
 		g_ChangeMapAtRoundEnd = false;
-		CreateTimer(2.0, Timer_ChangeMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(15.0, Timer_ChangeMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 		g_ChangeMapInProgress = true;
 	}
 	
@@ -937,7 +937,7 @@ public void Handler_VoteFinishedGenericShared(const char[] map,
 		else if (g_ChangeTime == MapChange_Instant)
 		{
 			DataPack data;
-			CreateDataTimer(2.0, Timer_ChangeMap, data);
+			CreateDataTimer(15.0, Timer_ChangeMap, data);
 			data.WriteString(map);
 			g_ChangeMapInProgress = false;
 		}
@@ -1567,3 +1567,4 @@ public int Native_GetNominatedMapList(Handle plugin, int numParams)
 
 	return;
 }
+
