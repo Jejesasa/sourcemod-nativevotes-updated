@@ -112,6 +112,8 @@ int g_ClientVotes[MAXPLAYERS+1];
 bool g_bRevoting[MAXPLAYERS+1];
 char g_LeaderList[1024];
 
+StringMap g_MapDisplayNames;
+
 ConVar sv_vote_holder_may_vote_no;
 
 // Map list stuffs
@@ -281,7 +283,8 @@ public void OnPluginStart()
 		
 		g_OverrideMaps = CreateGlobalForward("NativeVotes_OverrideMaps", ET_Hook, Param_Cell);
 	}
-	
+
+	LoadNativeVotesMapNames();
 	g_hVotes = new ArrayList(1, Game_GetMaxItems());
 	
 	AutoExecConfig(true, "nativevotes");
@@ -2527,3 +2530,46 @@ public int Native_RedrawVoteItem(Handle plugin, int numParams)
 	GetNativeString(1, g_newMenuItem, TRANSLATION_LENGTH);
 	return view_as<int>(Plugin_Changed);
 }
+
+void LoadNativeVotesMapNames()
+{
+    g_MapDisplayNames = new StringMap();
+
+    KeyValues kv = new KeyValues("NativeVotes_MapNames");
+
+    if (!kv.ImportFromFile(null, "configs/nativevotes_mapnames.cfg"))
+    {
+        LogMessage("[NativeVotes] nativevotes_mapnames.cfg non trouvé");
+        delete kv;
+        return;
+    }
+
+    if (kv.GotoFirstSubKey())
+    {
+        char map[PLATFORM_MAX_PATH];
+        char display[128];
+
+        do
+        {
+            kv.GetSectionName(map, sizeof(map));
+            kv.GetString("display", display, sizeof(display), map);
+
+            g_MapDisplayNames.SetString(map, display);
+        }
+        while (kv.GotoNextKey());
+    }
+
+    delete kv;
+}
+
+void GetMapDisplayName(const char[] map, char[] buffer, int maxlen)
+{
+    if (g_MapDisplayNames != null &&
+        g_MapDisplayNames.GetString(map, buffer, maxlen))
+    {
+        return;
+    }
+
+    strcopy(buffer, maxlen, map);
+}
+
